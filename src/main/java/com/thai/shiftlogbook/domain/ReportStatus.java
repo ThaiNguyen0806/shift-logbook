@@ -1,4 +1,4 @@
-package com.shiftlog.domain;
+package com.thai.shiftlogbook.domain;
 
 import java.util.EnumMap;
 import java.util.EnumSet;

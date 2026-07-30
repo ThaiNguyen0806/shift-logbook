@@ -1,4 +1,4 @@
-package com.shiftlog.domain;
+package com.thai.shiftlogbook.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

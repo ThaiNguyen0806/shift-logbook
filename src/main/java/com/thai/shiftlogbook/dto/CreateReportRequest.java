@@ -1,6 +1,7 @@
 package com.thai.shiftlogbook.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import com.thai.shiftlogbook.domain.Severity;
+import jakarta.validation.constraints.NotNull;
 
 public class CreateReportRequest {
 
@@ -8,8 +9,8 @@ public class CreateReportRequest {
     private String ongoingInvestigations;
     private String watchlistItems;
 
-    @NotBlank
-    private String severity;
+    @NotNull
+    private Severity severity;
 
     private String tags;
 
@@ -22,8 +23,8 @@ public class CreateReportRequest {
     public String getWatchlistItems() { return watchlistItems; }
     public void setWatchlistItems(String watchlistItems) { this.watchlistItems = watchlistItems; }
 
-    public String getSeverity() { return severity; }
-    public void setSeverity(String severity) { this.severity = severity; }
+    public Severity getSeverity() { return severity; }
+    public void setSeverity(Severity severity) { this.severity = severity; }
 
     public String getTags() { return tags; }
     public void setTags(String tags) { this.tags = tags; }

@@ -35,8 +35,9 @@ public class ShiftReport {
     @Column(columnDefinition = "TEXT")
     private String watchlistItems;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String severity;
+    private Severity severity;
 
     private String tags;
 
@@ -62,7 +63,7 @@ public class ShiftReport {
     }
 
     public ShiftReport(User author, String activeIncidents, String ongoingInvestigations,
-                       String watchlistItems, String severity, String tags) {
+                       String watchlistItems, Severity severity, String tags) {
         this.author = author;
         this.activeIncidents = activeIncidents;
         this.ongoingInvestigations = ongoingInvestigations;
@@ -115,11 +116,11 @@ public class ShiftReport {
         this.watchlistItems = watchlistItems;
     }
 
-    public String getSeverity() {
+    public Severity getSeverity() {
         return severity;
     }
 
-    public void setSeverity(String severity) {
+    public void setSeverity(Severity severity) {
         this.severity = severity;
     }
 

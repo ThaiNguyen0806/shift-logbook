@@ -10,8 +10,10 @@ import com.thai.shiftlogbook.repository.AuditLogRepository;
 import com.thai.shiftlogbook.repository.ShiftReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.thai.shiftlogbook.domain.Severity;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public class ShiftReportService {
 
     @Transactional
     public ShiftReport createDraft(User author, String activeIncidents, String ongoingInvestigations,
-                                   String watchlistItems, String severity, String tags) {
+                                   String watchlistItems, Severity severity, String tags) {
         ShiftReport report = new ShiftReport(author, activeIncidents, ongoingInvestigations,
                 watchlistItems, severity, tags);
         return reportRepository.save(report);
@@ -36,7 +38,7 @@ public class ShiftReportService {
 
     @Transactional
     public ShiftReport updateDraft(UUID reportId, String activeIncidents, String ongoingInvestigations,
-                                   String watchlistItems, String severity, String tags) {
+                                   String watchlistItems, Severity severity, String tags) {
         ShiftReport report = getOrThrow(reportId);
 
         if (!report.getStatus().isEditable()) {
@@ -93,5 +95,15 @@ public class ShiftReportService {
     private ShiftReport getOrThrow(UUID reportId) {
         return reportRepository.findById(reportId)
                 .orElseThrow(() -> new NoSuchElementException("No report with id " + reportId));
+    }
+
+    @Transactional(readOnly = true)
+    public ShiftReport getOrThrowPublic(UUID reportId) {
+        return getOrThrow(reportId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> getAll() {
+        return reportRepository.findAll();
     }
 }

@@ -3,6 +3,7 @@ package com.thai.shiftlogbook.dto;
 import com.thai.shiftlogbook.domain.ShiftReport;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public class ShiftReportResponse {
@@ -19,14 +20,19 @@ public class ShiftReportResponse {
     private final Instant createdAt;
     private final Instant publishedAt;
     private final Instant acknowledgedAt;
+    private final List<AuditLogEntryResponse> history;
 
     public ShiftReportResponse(ShiftReport report) {
+        this(report, null);
+    }
+
+    public ShiftReportResponse(ShiftReport report, List<AuditLogEntryResponse> history) {
         this.id = report.getId();
         this.status = report.getStatus().name();
         this.activeIncidents = report.getActiveIncidents();
         this.ongoingInvestigations = report.getOngoingInvestigations();
         this.watchlistItems = report.getWatchlistItems();
-        this.severity = report.getSeverity();
+        this.severity = report.getSeverity().name();
         this.tags = report.getTags();
         this.authorUsername = report.getAuthor().getUsername();
         this.acknowledgedByUsername = report.getAcknowledgedBy() != null
@@ -34,6 +40,7 @@ public class ShiftReportResponse {
         this.createdAt = report.getCreatedAt();
         this.publishedAt = report.getPublishedAt();
         this.acknowledgedAt = report.getAcknowledgedAt();
+        this.history = history;
     }
 
     public UUID getId() { return id; }
@@ -48,4 +55,5 @@ public class ShiftReportResponse {
     public Instant getCreatedAt() { return createdAt; }
     public Instant getPublishedAt() { return publishedAt; }
     public Instant getAcknowledgedAt() { return acknowledgedAt; }
+    public List<AuditLogEntryResponse> getHistory() { return history; }
 }

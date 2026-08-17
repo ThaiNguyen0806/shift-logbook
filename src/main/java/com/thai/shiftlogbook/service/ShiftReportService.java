@@ -106,4 +106,9 @@ public class ShiftReportService {
     public List<ShiftReport> getAll() {
         return reportRepository.findAll();
     }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> search(String severity, String tag, Instant since) {
+        return reportRepository.search(severity, tag, since);
+    }
 }

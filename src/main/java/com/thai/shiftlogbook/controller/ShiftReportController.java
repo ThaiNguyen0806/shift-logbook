@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,8 +75,12 @@ public class ShiftReportController {
     }
 
     @GetMapping
-    public List<ShiftReportResponse> getAll() {
-        return reportService.getAll()
+    public List<ShiftReportResponse> getAll(
+            @RequestParam(required = false) String severity,
+            @RequestParam(required = false) String tag,
+            @RequestParam(required = false) Instant since) {
+
+        return reportService.search(severity, tag, since)
                 .stream()
                 .map(ShiftReportResponse::new)
                 .toList();

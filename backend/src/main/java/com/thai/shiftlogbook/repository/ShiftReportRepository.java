@@ -13,7 +13,8 @@ public interface ShiftReportRepository extends JpaRepository<ShiftReport, UUID> 
 
     @Query(value = """
         SELECT * FROM shift_reports
-        WHERE (:severity IS NULL OR severity = :severity)
+        WHERE status != 'DRAFT'
+          AND (:severity IS NULL OR severity = :severity)
           AND (:tag IS NULL OR tags LIKE CONCAT('%', :tag, '%'))
           AND (CAST(:since AS timestamptz) IS NULL OR created_at >= CAST(:since AS timestamptz))
         ORDER BY created_at DESC
@@ -21,4 +22,8 @@ public interface ShiftReportRepository extends JpaRepository<ShiftReport, UUID> 
     List<ShiftReport> search(@Param("severity") String severity,
                              @Param("tag") String tag,
                              @Param("since") Instant since);
+
+    @Query(value = "SELECT * FROM shift_reports WHERE author_id = :userId AND status = 'DRAFT' ORDER BY created_at DESC",
+            nativeQuery = true)
+    List<ShiftReport> findMyDrafts(@Param("userId") UUID userId);
 }

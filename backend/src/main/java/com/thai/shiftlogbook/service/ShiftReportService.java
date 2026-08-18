@@ -56,10 +56,16 @@ public class ShiftReportService {
 
     @Transactional
     public ShiftReport publish(UUID reportId, User actor, String systemSnapshot) {
-        ShiftReport report = transition(reportId, ReportStatus.PUBLISHED, actor);
-        report.setPublishedAt(Instant.now());
-        report.setSystemSnapshot(systemSnapshot);
-        return reportRepository.save(report);
+        ShiftReport report = getOrThrow(reportId);
+
+        if (!report.getAuthor().getId().equals(actor.getId())) {
+            throw new IllegalStateException("Only the author can publish this report");
+        }
+
+        ShiftReport transitioned = transition(reportId, ReportStatus.PUBLISHED, actor);
+        transitioned.setPublishedAt(Instant.now());
+        transitioned.setSystemSnapshot(systemSnapshot);
+        return reportRepository.save(transitioned);
     }
 
     @Transactional
@@ -110,5 +116,10 @@ public class ShiftReportService {
     @Transactional(readOnly = true)
     public List<ShiftReport> search(String severity, String tag, Instant since) {
         return reportRepository.search(severity, tag, since);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> getMyDrafts(User user) {
+        return reportRepository.findMyDrafts(user.getId());
     }
 }

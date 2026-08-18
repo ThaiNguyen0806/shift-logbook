@@ -85,4 +85,12 @@ public class ShiftReportController {
                 .map(ShiftReportResponse::new)
                 .toList();
     }
+
+    @GetMapping("/my-drafts")
+    public List<ShiftReportResponse> getMyDrafts(@AuthenticationPrincipal User currentUser) {
+        return reportService.getMyDrafts(currentUser)
+                .stream()
+                .map(ShiftReportResponse::new)
+                .toList();
+    }
 }

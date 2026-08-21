@@ -12,13 +12,12 @@ import java.util.UUID;
 public interface ShiftReportRepository extends JpaRepository<ShiftReport, UUID> {
 
     @Query(value = """
-        SELECT * FROM shift_reports
-        WHERE status != 'DRAFT'
-          AND (:severity IS NULL OR severity = :severity)
-          AND (:tag IS NULL OR tags LIKE CONCAT('%', :tag, '%'))
-          AND (CAST(:since AS timestamptz) IS NULL OR created_at >= CAST(:since AS timestamptz))
-        ORDER BY created_at DESC
-        """, nativeQuery = true)
+            SELECT * FROM shift_reports
+            WHERE (:severity IS NULL OR severity = :severity)
+              AND (:tag IS NULL OR tags LIKE CONCAT('%', :tag, '%'))
+              AND (CAST(:since AS timestamptz) IS NULL OR created_at >= CAST(:since AS timestamptz))
+            ORDER BY created_at DESC
+            """, nativeQuery = true)
     List<ShiftReport> search(@Param("severity") String severity,
                              @Param("tag") String tag,
                              @Param("since") Instant since);
@@ -26,4 +25,8 @@ public interface ShiftReportRepository extends JpaRepository<ShiftReport, UUID> 
     @Query(value = "SELECT * FROM shift_reports WHERE author_id = :userId AND status = 'DRAFT' ORDER BY created_at DESC",
             nativeQuery = true)
     List<ShiftReport> findMyDrafts(@Param("userId") UUID userId);
+
+    @Query(value = "SELECT * FROM shift_reports WHERE handoff_to_id = :userId AND status = 'PUBLISHED' ORDER BY published_at ASC",
+            nativeQuery = true)
+    List<ShiftReport> findPendingForUser(@Param("userId") UUID userId);
 }

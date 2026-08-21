@@ -17,6 +17,7 @@ public class ShiftReportResponse {
     private final String tags;
     private final String authorUsername;
     private final String acknowledgedByUsername;
+    private final String handoffToUsername;
     private final Instant createdAt;
     private final Instant publishedAt;
     private final Instant acknowledgedAt;
@@ -37,6 +38,8 @@ public class ShiftReportResponse {
         this.authorUsername = report.getAuthor().getUsername();
         this.acknowledgedByUsername = report.getAcknowledgedBy() != null
                 ? report.getAcknowledgedBy().getUsername() : null;
+        this.handoffToUsername = report.getHandoffToUser() != null
+                ? report.getHandoffToUser().getUsername() : null;
         this.createdAt = report.getCreatedAt();
         this.publishedAt = report.getPublishedAt();
         this.acknowledgedAt = report.getAcknowledgedAt();
@@ -52,6 +55,7 @@ public class ShiftReportResponse {
     public String getTags() { return tags; }
     public String getAuthorUsername() { return authorUsername; }
     public String getAcknowledgedByUsername() { return acknowledgedByUsername; }
+    public String getHandoffToUsername() { return handoffToUsername; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getPublishedAt() { return publishedAt; }
     public Instant getAcknowledgedAt() { return acknowledgedAt; }

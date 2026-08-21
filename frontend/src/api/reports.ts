@@ -42,3 +42,8 @@ export async function getMyDrafts(): Promise<ShiftReport[]> {
     const res = await client.get<ShiftReport[]>("/reports/my-drafts");
     return res.data;
 }
+
+export async function getPendingForMe(): Promise<ShiftReport[]> {
+    const res = await client.get<ShiftReport[]>("/reports/pending-for-me");
+    return res.data;
+}

@@ -1,15 +1,7 @@
 package com.thai.shiftlogbook.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -49,6 +41,10 @@ public class ShiftReport {
     @JoinColumn(name = "acknowledged_by_id")
     private User acknowledgedBy;
 
+    @ManyToOne
+    @JoinColumn(name = "handoff_to_id")
+    private User handoffToUser;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -63,13 +59,14 @@ public class ShiftReport {
     }
 
     public ShiftReport(User author, String activeIncidents, String ongoingInvestigations,
-                       String watchlistItems, Severity severity, String tags) {
+                       String watchlistItems, Severity severity, String tags, User handoffToUser) {
         this.author = author;
         this.activeIncidents = activeIncidents;
         this.ongoingInvestigations = ongoingInvestigations;
         this.watchlistItems = watchlistItems;
         this.severity = severity;
         this.tags = tags;
+        this.handoffToUser = handoffToUser;
         this.status = ReportStatus.DRAFT;
     }
 
@@ -80,95 +77,41 @@ public class ShiftReport {
         }
     }
 
-    public UUID getId() {
-        return id;
-    }
+    public UUID getId() { return id; }
 
-    public ReportStatus getStatus() {
-        return status;
-    }
+    public ReportStatus getStatus() { return status; }
+    public void setStatus(ReportStatus status) { this.status = status; }
 
-    public void setStatus(ReportStatus status) {
-        this.status = status;
-    }
+    public String getActiveIncidents() { return activeIncidents; }
+    public void setActiveIncidents(String activeIncidents) { this.activeIncidents = activeIncidents; }
 
-    public String getActiveIncidents() {
-        return activeIncidents;
-    }
+    public String getOngoingInvestigations() { return ongoingInvestigations; }
+    public void setOngoingInvestigations(String ongoingInvestigations) { this.ongoingInvestigations = ongoingInvestigations; }
 
-    public void setActiveIncidents(String activeIncidents) {
-        this.activeIncidents = activeIncidents;
-    }
+    public String getWatchlistItems() { return watchlistItems; }
+    public void setWatchlistItems(String watchlistItems) { this.watchlistItems = watchlistItems; }
 
-    public String getOngoingInvestigations() {
-        return ongoingInvestigations;
-    }
+    public Severity getSeverity() { return severity; }
+    public void setSeverity(Severity severity) { this.severity = severity; }
 
-    public void setOngoingInvestigations(String ongoingInvestigations) {
-        this.ongoingInvestigations = ongoingInvestigations;
-    }
+    public String getTags() { return tags; }
+    public void setTags(String tags) { this.tags = tags; }
 
-    public String getWatchlistItems() {
-        return watchlistItems;
-    }
+    public User getAuthor() { return author; }
 
-    public void setWatchlistItems(String watchlistItems) {
-        this.watchlistItems = watchlistItems;
-    }
+    public User getAcknowledgedBy() { return acknowledgedBy; }
+    public void setAcknowledgedBy(User acknowledgedBy) { this.acknowledgedBy = acknowledgedBy; }
 
-    public Severity getSeverity() {
-        return severity;
-    }
+    public User getHandoffToUser() { return handoffToUser; }
 
-    public void setSeverity(Severity severity) {
-        this.severity = severity;
-    }
+    public Instant getCreatedAt() { return createdAt; }
 
-    public String getTags() {
-        return tags;
-    }
+    public Instant getPublishedAt() { return publishedAt; }
+    public void setPublishedAt(Instant publishedAt) { this.publishedAt = publishedAt; }
 
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
+    public Instant getAcknowledgedAt() { return acknowledgedAt; }
+    public void setAcknowledgedAt(Instant acknowledgedAt) { this.acknowledgedAt = acknowledgedAt; }
 
-    public User getAuthor() {
-        return author;
-    }
-
-    public User getAcknowledgedBy() {
-        return acknowledgedBy;
-    }
-
-    public void setAcknowledgedBy(User acknowledgedBy) {
-        this.acknowledgedBy = acknowledgedBy;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public Instant getPublishedAt() {
-        return publishedAt;
-    }
-
-    public void setPublishedAt(Instant publishedAt) {
-        this.publishedAt = publishedAt;
-    }
-
-    public Instant getAcknowledgedAt() {
-        return acknowledgedAt;
-    }
-
-    public void setAcknowledgedAt(Instant acknowledgedAt) {
-        this.acknowledgedAt = acknowledgedAt;
-    }
-
-    public String getSystemSnapshot() {
-        return systemSnapshot;
-    }
-
-    public void setSystemSnapshot(String systemSnapshot) {
-        this.systemSnapshot = systemSnapshot;
-    }
+    public String getSystemSnapshot() { return systemSnapshot; }
+    public void setSystemSnapshot(String systemSnapshot) { this.systemSnapshot = systemSnapshot; }
 }

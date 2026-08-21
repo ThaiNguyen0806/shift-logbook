@@ -1,7 +1,8 @@
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createReport } from "../api/reports";
-import type { Severity } from "../types";
+import { getUsers } from "../api/users";
+import type { Severity, UserSummary } from "../types";
 
 export default function CreateReportPage() {
     const [activeIncidents, setActiveIncidents] = useState("");
@@ -9,7 +10,13 @@ export default function CreateReportPage() {
     const [watchlistItems, setWatchlistItems] = useState("");
     const [severity, setSeverity] = useState<Severity>("LOW");
     const [tags, setTags] = useState("");
+    const [handoffToUserId, setHandoffToUserId] = useState("");
+    const [users, setUsers] = useState<UserSummary[]>([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getUsers().then(setUsers);
+    }, []);
 
     async function handleSubmit(e: FormEvent) {
         e.preventDefault();
@@ -19,6 +26,7 @@ export default function CreateReportPage() {
             watchlistItems,
             severity,
             tags,
+            handoffToUserId,
         });
         navigate(`/reports/${report.id}`);
     }
@@ -26,22 +34,46 @@ export default function CreateReportPage() {
     return (
         <div>
             <h1>New Report</h1>
+            <p className="form-intro">
+                Write this for whoever picks up after you - they weren't here, so include anything they'd need to know.
+            </p>
             <form onSubmit={handleSubmit}>
                 <div>
+                    <label>Hand off to</label>
+                    <select value={handoffToUserId} onChange={(e) => setHandoffToUserId(e.target.value)} required>
+                        <option value="">Select a person</option>
+                        {users.map((u) => (
+                            <option key={u.id} value={u.id}>
+                                {u.displayName} ({u.username})
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div>
                     <label>Active Incidents</label>
-                    <p className="field-hint">Anything currently ongoing that the next shift needs to know about.</p>
-                    <textarea value={activeIncidents} onChange={(e) => setActiveIncidents(e.target.value)} placeholder="e.g. Checkout page is down since 2 PM" />
+                    <p className="field-hint">Something broken right now.</p>
+                    <textarea
+                        value={activeIncidents}
+                        onChange={(e) => setActiveIncidents(e.target.value)}
+                        placeholder="e.g. Site is down"
+                    />
                 </div>
                 <div>
                     <label>Ongoing Investigations</label>
-                    <p className="field-hint">Issues you're still digging into - not resolved, but not a live incident either.</p>
-                    <textarea value={ongoingInvestigations} onChange={(e) => setOngoingInvestigations(e.target.value)} placeholder="e.g. Database is running slow, not sure why yet"
+                    <p className="field-hint">Still figuring out what's wrong.</p>
+                    <textarea
+                        value={ongoingInvestigations}
+                        onChange={(e) => setOngoingInvestigations(e.target.value)}
+                        placeholder="e.g. App is slow, not sure why yet"
                     />
                 </div>
                 <div>
                     <label>Watchlist Items</label>
-                    <p className="field-hint">Things that aren't a problem yet, but worth keeping an eye on.</p>
-                    <textarea value={watchlistItems} onChange={(e) => setWatchlistItems(e.target.value)} placeholder="e.g. Memory usage on server climbing slowly, worth keeping an eye on"
+                    <p className="field-hint">Not broken yet, but worth watching.</p>
+                    <textarea
+                        value={watchlistItems}
+                        onChange={(e) => setWatchlistItems(e.target.value)}
+                        placeholder="e.g. Storage is getting full"
                     />
                 </div>
                 <div>

@@ -3,6 +3,8 @@ package com.thai.shiftlogbook.dto;
 import com.thai.shiftlogbook.domain.Severity;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 public class CreateReportRequest {
 
     private String activeIncidents;
@@ -13,6 +15,9 @@ public class CreateReportRequest {
     private Severity severity;
 
     private String tags;
+
+    @NotNull
+    private UUID handoffToUserId;
 
     public String getActiveIncidents() { return activeIncidents; }
     public void setActiveIncidents(String activeIncidents) { this.activeIncidents = activeIncidents; }
@@ -28,4 +33,7 @@ public class CreateReportRequest {
 
     public String getTags() { return tags; }
     public void setTags(String tags) { this.tags = tags; }
+
+    public UUID getHandoffToUserId() { return handoffToUserId; }
+    public void setHandoffToUserId(UUID handoffToUserId) { this.handoffToUserId = handoffToUserId; }
 }

@@ -2,6 +2,7 @@ package com.thai.shiftlogbook.service;
 
 import com.thai.shiftlogbook.domain.AuditLogEntry;
 import com.thai.shiftlogbook.domain.ReportStatus;
+import com.thai.shiftlogbook.domain.Severity;
 import com.thai.shiftlogbook.domain.ShiftReport;
 import com.thai.shiftlogbook.domain.User;
 import com.thai.shiftlogbook.exception.IllegalTransitionException;
@@ -10,7 +11,6 @@ import com.thai.shiftlogbook.repository.AuditLogRepository;
 import com.thai.shiftlogbook.repository.ShiftReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.thai.shiftlogbook.domain.Severity;
 
 import java.time.Instant;
 import java.util.List;
@@ -30,9 +30,9 @@ public class ShiftReportService {
 
     @Transactional
     public ShiftReport createDraft(User author, String activeIncidents, String ongoingInvestigations,
-                                   String watchlistItems, Severity severity, String tags) {
+                                   String watchlistItems, Severity severity, String tags, User handoffToUser) {
         ShiftReport report = new ShiftReport(author, activeIncidents, ongoingInvestigations,
-                watchlistItems, severity, tags);
+                watchlistItems, severity, tags, handoffToUser);
         return reportRepository.save(report);
     }
 
@@ -72,14 +72,39 @@ public class ShiftReportService {
     public ShiftReport acknowledge(UUID reportId, User actor) {
         ShiftReport report = getOrThrow(reportId);
 
-        if (report.getAuthor().getId().equals(actor.getId())) {
-            throw new IllegalStateException("Cannot acknowledge your own report");
+        if (!report.getHandoffToUser().getId().equals(actor.getId())) {
+            throw new IllegalStateException("Only the designated recipient can acknowledge this report");
         }
 
         ShiftReport transitioned = transition(reportId, ReportStatus.ACKNOWLEDGED, actor);
         transitioned.setAcknowledgedAt(Instant.now());
         transitioned.setAcknowledgedBy(actor);
         return reportRepository.save(transitioned);
+    }
+
+    @Transactional(readOnly = true)
+    public ShiftReport getOrThrowPublic(UUID reportId) {
+        return getOrThrow(reportId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> getAll() {
+        return reportRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> getMyDrafts(User user) {
+        return reportRepository.findMyDrafts(user.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> getPendingForMe(User user) {
+        return reportRepository.findPendingForUser(user.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ShiftReport> search(String severity, String tag, Instant since) {
+        return reportRepository.search(severity, tag, since);
     }
 
     private ShiftReport transition(UUID reportId, ReportStatus target, User actor) {
@@ -101,25 +126,5 @@ public class ShiftReportService {
     private ShiftReport getOrThrow(UUID reportId) {
         return reportRepository.findById(reportId)
                 .orElseThrow(() -> new NoSuchElementException("No report with id " + reportId));
-    }
-
-    @Transactional(readOnly = true)
-    public ShiftReport getOrThrowPublic(UUID reportId) {
-        return getOrThrow(reportId);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ShiftReport> getAll() {
-        return reportRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public List<ShiftReport> search(String severity, String tag, Instant since) {
-        return reportRepository.search(severity, tag, since);
-    }
-
-    @Transactional(readOnly = true)
-    public List<ShiftReport> getMyDrafts(User user) {
-        return reportRepository.findMyDrafts(user.getId());
     }
 }

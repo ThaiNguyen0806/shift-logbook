@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getReport, publishReport, acknowledgeReport } from "../api/reports";
 import type { ShiftReport } from "../types";
+import { useAuth } from "../auth/AuthContext";
 
 function formatDate(iso: string): string {
     return new Date(iso).toLocaleString(undefined, {
@@ -15,6 +16,7 @@ export default function ReportDetailPage() {
     const [report, setReport] = useState<ShiftReport | null>(null);
     const [snapshot, setSnapshot] = useState("");
     const [error, setError] = useState("");
+    const { refreshPendingCount } = useAuth();
 
     async function load() {
         if (!id) return;
@@ -43,6 +45,7 @@ export default function ReportDetailPage() {
         try {
             await acknowledgeReport(id);
             await load();
+            refreshPendingCount();
         } catch (err: any) {
             setError(err.response?.data?.message ?? "Failed to acknowledge");
         }
@@ -57,6 +60,7 @@ export default function ReportDetailPage() {
                 <span className={`badge badge-${report.status.toLowerCase()}`}>{report.status}</span>
             </div>
             <p className="detail-meta">Author: {report.authorUsername}</p>
+            <p className="detail-meta">Handoff to: {report.handoffToUsername ?? "—"}</p>
             <p className="detail-meta">Created: {formatDate(report.createdAt)}</p>
             {report.publishedAt && (
                 <p className="detail-meta">Published: {formatDate(report.publishedAt)}</p>

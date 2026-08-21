@@ -18,6 +18,7 @@ export interface ShiftReport {
     tags: string;
     authorUsername: string;
     acknowledgedByUsername: string | null;
+    handoffToUsername: string | null;
     createdAt: string;
     publishedAt: string | null;
     acknowledgedAt: string | null;
@@ -34,9 +35,16 @@ export interface CreateReportPayload {
     watchlistItems: string;
     severity: Severity;
     tags: string;
+    handoffToUserId: string;
 }
 
 export interface ErrorResponse {
     message: string;
     timestamp: string;
+}
+
+export interface UserSummary {
+    id: string;
+    username: string;
+    displayName: string;
 }

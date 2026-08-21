@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
 import { login as apiLogin, register as apiRegister } from "../api/auth";
 import { getPendingForMe } from "../api/reports";
 

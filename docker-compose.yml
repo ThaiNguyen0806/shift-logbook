@@ -11,5 +11,34 @@ services:
     volumes:
       - shiftlog_pgdata:/var/lib/postgresql/data
 
+  backend:
+    build: ./backend
+    container_name: shiftlog-backend
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+
+  frontend:
+    build: ./frontend
+    container_name: shiftlog-frontend
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: shiftlog-nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "5173:80"
+
 volumes:
   shiftlog_pgdata:

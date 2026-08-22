@@ -2,6 +2,7 @@ services:
   backend:
     build: ./backend
     container_name: shiftlog-backend
+    restart: unless-stopped
     environment:
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
@@ -15,12 +16,14 @@ services:
   frontend:
     build: ./frontend
     container_name: shiftlog-frontend
+    restart: unless-stopped
 
   nginx:
     build:
       context: .
       dockerfile: Dockerfile.nginx
     container_name: shiftlog-nginx
+    restart: unless-stopped
     depends_on:
       - backend
       - frontend

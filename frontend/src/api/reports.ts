@@ -28,8 +28,8 @@ export async function updateReport(
     return res.data;
 }
 
-export async function publishReport(id: string, systemSnapshot: string): Promise<ShiftReport> {
-    const res = await client.post<ShiftReport>(`/reports/${id}/publish`, { systemSnapshot });
+export async function publishReport(id: string): Promise<ShiftReport> {
+    const res = await client.post<ShiftReport>(`/reports/${id}/publish`);
     return res.data;
 }
 

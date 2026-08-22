@@ -13,7 +13,7 @@ export default function Layout() {
     return (
         <div>
             <header className="app-header">
-                <Link to="/" className="app-title">Shift Logbook</Link>
+                <Link to="/" className="app-title">Relay</Link>
                 <nav>
                     <Link to="/">Dashboard</Link>
                     <Link to="/reports/new">New Report</Link>

@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    container_name: shiftlog-backend
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+  frontend:
+    build: ./frontend
+    container_name: shiftlog-frontend
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: shiftlog-nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"

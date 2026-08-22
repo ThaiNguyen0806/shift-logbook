@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ShiftReportService {
@@ -55,7 +56,7 @@ public class ShiftReportService {
     }
 
     @Transactional
-    public ShiftReport publish(UUID reportId, User actor, String systemSnapshot) {
+    public ShiftReport publish(UUID reportId, User actor) {
         ShiftReport report = getOrThrow(reportId);
 
         if (!report.getAuthor().getId().equals(actor.getId())) {
@@ -64,7 +65,7 @@ public class ShiftReportService {
 
         ShiftReport transitioned = transition(reportId, ReportStatus.PUBLISHED, actor);
         transitioned.setPublishedAt(Instant.now());
-        transitioned.setSystemSnapshot(systemSnapshot);
+        transitioned.setSystemSnapshot(captureSystemSnapshot());
         return reportRepository.save(transitioned);
     }
 
@@ -126,5 +127,25 @@ public class ShiftReportService {
     private ShiftReport getOrThrow(UUID reportId) {
         return reportRepository.findById(reportId)
                 .orElseThrow(() -> new NoSuchElementException("No report with id " + reportId));
+    }
+
+    private String captureSystemSnapshot() {
+        try {
+            ProcessBuilder pb = new ProcessBuilder("bash", "scripts/system-snapshot.sh");
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            String output = new String(process.getInputStream().readAllBytes());
+            boolean finished = process.waitFor(10, TimeUnit.SECONDS);
+
+            if (!finished) {
+                process.destroyForcibly();
+                return "System snapshot timed out.";
+            }
+
+            return output.trim();
+        } catch (Exception e) {
+            return "System snapshot unavailable: " + e.getMessage();
+        }
     }
 }

@@ -14,7 +14,6 @@ function formatDate(iso: string): string {
 export default function ReportDetailPage() {
     const { id } = useParams<{ id: string }>();
     const [report, setReport] = useState<ShiftReport | null>(null);
-    const [snapshot, setSnapshot] = useState("");
     const [error, setError] = useState("");
     const { refreshPendingCount } = useAuth();
 
@@ -32,7 +31,7 @@ export default function ReportDetailPage() {
         if (!id) return;
         setError("");
         try {
-            await publishReport(id, snapshot);
+            await publishReport(id);
             await load();
         } catch (err: any) {
             setError(err.response?.data?.message ?? "Failed to publish");
@@ -87,11 +86,6 @@ export default function ReportDetailPage() {
 
             {report.status === "DRAFT" && (
                 <div className="actions">
-                    <input
-                        placeholder="System snapshot"
-                        value={snapshot}
-                        onChange={(e) => setSnapshot(e.target.value)}
-                    />
                     <button onClick={handlePublish}>Publish</button>
                 </div>
             )}

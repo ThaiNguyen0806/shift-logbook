@@ -56,9 +56,8 @@ public class ShiftReportController {
 
     @PostMapping("/{id}/publish")
     public ShiftReportResponse publish(@PathVariable UUID id,
-                                       @AuthenticationPrincipal User currentUser,
-                                       @RequestBody PublishReportRequest request) {
-        ShiftReport report = reportService.publish(id, currentUser, request.getSystemSnapshot());
+                                       @AuthenticationPrincipal User currentUser) {
+        ShiftReport report = reportService.publish(id, currentUser);
         return new ShiftReportResponse(report);
     }
 

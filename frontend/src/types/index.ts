@@ -23,6 +23,7 @@ export interface ShiftReport {
     publishedAt: string | null;
     acknowledgedAt: string | null;
     history: AuditLogEntry[] | null;
+    systemSnapshot: string | null;
 }
 
 export interface LoginResponse {

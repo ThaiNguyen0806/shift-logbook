@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getReport, publishReport, acknowledgeReport } from "../api/reports";
-import type { ShiftReport } from "../types";
 import { useAuth } from "../auth/AuthContext";
+import type { ShiftReport } from "../types";
 
 function formatDate(iso: string): string {
     return new Date(iso).toLocaleString(undefined, {
@@ -81,6 +81,13 @@ export default function ReportDetailPage() {
                 <h3>Watchlist Items</h3>
                 <p>{report.watchlistItems}</p>
             </div>
+
+            {report.status !== "DRAFT" && (
+                <div className="detail-section">
+                    <h3>System Snapshot</h3>
+                    <p>{report.systemSnapshot || "No snapshot captured."}</p>
+                </div>
+            )}
 
             {error && <p className="error">{error}</p>}
 

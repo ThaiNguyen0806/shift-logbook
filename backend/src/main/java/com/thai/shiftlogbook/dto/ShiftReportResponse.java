@@ -21,6 +21,7 @@ public class ShiftReportResponse {
     private final Instant createdAt;
     private final Instant publishedAt;
     private final Instant acknowledgedAt;
+    private final String systemSnapshot;
     private final List<AuditLogEntryResponse> history;
 
     public ShiftReportResponse(ShiftReport report) {
@@ -43,6 +44,7 @@ public class ShiftReportResponse {
         this.createdAt = report.getCreatedAt();
         this.publishedAt = report.getPublishedAt();
         this.acknowledgedAt = report.getAcknowledgedAt();
+        this.systemSnapshot = report.getSystemSnapshot();
         this.history = history;
     }
 
@@ -59,5 +61,6 @@ public class ShiftReportResponse {
     public Instant getCreatedAt() { return createdAt; }
     public Instant getPublishedAt() { return publishedAt; }
     public Instant getAcknowledgedAt() { return acknowledgedAt; }
+    public String getSystemSnapshot() { return systemSnapshot; }
     public List<AuditLogEntryResponse> getHistory() { return history; }
 }
